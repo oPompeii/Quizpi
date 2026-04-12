@@ -22,7 +22,7 @@ public class QuizPI {
         // Quantidade de jogadores Minimo 1 maximo 5
         String[] botoesJogadores = { "1", "2", "3", "4", "5" };
         int selecao = JOptionPane.showOptionDialog(null,
-                "Quantos assassinos vão participar?", "Configuração",
+                "Quantos Jogadores vão participar?", "Configuração",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, botoesJogadores, botoesJogadores[0]);
 
         if (selecao == JOptionPane.CLOSED_OPTION)
