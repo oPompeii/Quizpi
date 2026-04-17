@@ -3,30 +3,58 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class QuizPI {
+public class App {
 
     public static void main(String[] args) {
         // Tela Inicial, é possivel personalizar
-        String[] opcoesMenu = { "Iniciar Quiz", "Sair" };
-        int menuPrincipal = JOptionPane.showOptionDialog(null,
-                "===================================\n" +
-                        "       BEM-VINDO AO QUIZ       \n" +
-                        "===================================\n\n" +
-                        "Desafio dos 7 Jogos",
+        String[] opcoesMenu = { "🚀 Iniciar Quiz", "❌ Sair" };
+
+        String mensagem = "<html>" +
+                "<div style='text-align: center; background-color: #2c3e50; color: white; padding: 10px; border-radius: 5px;'>"
+                +
+                "   <h2 style='margin: 0;'>🎮 DESAFIO DOS 7 JOGOS</h2>" +
+                "   <hr color='#ecf0f1'>" +
+                "   <p style='font-size: 12px;'>Você está pronto para testar seus conhecimentos?</p>" +
+                "</div>" +
+                "</html>";
+
+        int menuPrincipal = JOptionPane.showOptionDialog(
+                null,
+                mensagem,
                 "Menu Principal",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opcoesMenu, opcoesMenu[0]);
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                opcoesMenu,
+                opcoesMenu[0]);
 
         if (menuPrincipal != 0)
             encerrar();
 
         // Quantidade de jogadores Minimo 1 maximo 5
         String[] botoesJogadores = { "1", "2", "3", "4", "5" };
-        int selecao = JOptionPane.showOptionDialog(null,
-                "Quantos Jogadores vão participar?", "Configuração",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, botoesJogadores, botoesJogadores[0]);
+
+        String msgJogadores = "<html>" +
+                "<div style='text-align:center;'>" +
+                "<h3>👥 Configuração</h3>" +
+                "<hr>" +
+                "<p>Quantos jogadores vão participar?</p>" +
+                "</div>" +
+                "</html>";
+
+        int selecao = JOptionPane.showOptionDialog(
+                null,
+                msgJogadores,
+                "Configuração",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                botoesJogadores,
+                botoesJogadores[0]);
 
         if (selecao == JOptionPane.CLOSED_OPTION)
             encerrar();
+
         int qtdJogadores = selecao + 1;
 
         // Escolha a quantidade de perguntas
