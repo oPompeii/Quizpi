@@ -7,75 +7,58 @@ public class App {
 
     public static void main(String[] args) {
         // Tela Inicial, é possivel personalizar
-        String[] opcoesMenu = { "🚀 Iniciar Quiz", "❌ Sair" };
+        while (true) {
+            // Tela Inicial estilizada
+            String[] opcoesMenu = { "🚀 Iniciar Quiz", "❌ Sair" };
+            String mensagem = "<html><div style='text-align: center; background-color: #2c3e50; color: white; padding: 10px; border-radius: 5px;'>"
+                    + "   <h2 style='margin: 0; letter-spacing: 2px;'>🎮 DESAFIO DOS 7 JOGOS</h2>"
+                    + "   <hr color='#ecf0f1'>"
+                    + "   <p style='font-size: 12px;'>Teste seus conhecimentos sobre o mundo dos games!</p>"
+                    + "</div></html>";
 
-        String mensagem = "<html>" +
-                "<div style='text-align: center; background-color: #2c3e50; color: white; padding: 10px; border-radius: 5px;'>"
-                +
-                "   <h2 style='margin: 0;'>🎮 DESAFIO DOS 7 JOGOS</h2>" +
-                "   <hr color='#ecf0f1'>" +
-                "   <p style='font-size: 12px;'>Você está pronto para testar seus conhecimentos?</p>" +
-                "</div>" +
-                "</html>";
+            int menuPrincipal = JOptionPane.showOptionDialog(null, mensagem, "Menu Principal",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opcoesMenu, opcoesMenu[0]);
 
-        int menuPrincipal = JOptionPane.showOptionDialog(
-                null,
-                mensagem,
-                "Menu Principal",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                opcoesMenu,
-                opcoesMenu[0]);
+            if (menuPrincipal != 0)
+                encerrar();
 
-        if (menuPrincipal != 0)
-            encerrar();
+            // Configuração de Jogadores
+            String[] botoesJogadores = { "1", "2", "3", "4", "5" };
+            String msgJogadores = "<html><div style='text-align:center;'><h3>👥 Configuração</h3><hr><p>Quantos jogadores vão participar?</p></div></html>";
 
-        // Quantidade de jogadores Minimo 1 maximo 5
-        String[] botoesJogadores = { "1", "2", "3", "4", "5" };
+            int selecao = JOptionPane.showOptionDialog(null, msgJogadores, "Configuração",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, botoesJogadores,
+                    botoesJogadores[0]);
 
-        String msgJogadores = "<html>" +
-                "<div style='text-align:center;'>" +
-                "<h3>👥 Configuração</h3>" +
-                "<hr>" +
-                "<p>Quantos jogadores vão participar?</p>" +
-                "</div>" +
-                "</html>";
+            if (selecao == JOptionPane.CLOSED_OPTION)
+                encerrar();
 
-        int selecao = JOptionPane.showOptionDialog(
-                null,
-                msgJogadores,
-                "Configuração",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                botoesJogadores,
-                botoesJogadores[0]);
+            int qtdJogadores = selecao + 1;
+            int qtdPerguntas = escolherQuantidadeDigitada(
+                    "Quantas perguntas cada um deve responder?\n(Escolha de 1 a 7)", "Configuração", 1, 7);
 
-        if (selecao == JOptionPane.CLOSED_OPTION)
-            encerrar();
+            // Cadastro de Nomes
+            String[] nomes = new String[qtdJogadores];
+            for (int i = 0; i < qtdJogadores; i++) {
+                nomes[i] = JOptionPane.showInputDialog(null, "Nome do Jogador " + (i + 1) + ":", "Identificação",
+                        JOptionPane.QUESTION_MESSAGE);
+                if (nomes[i] == null || nomes[i].trim().isEmpty()) {
+                    nomes[i] = "Jogador " + (i + 1);
+                }
+            }
 
-        int qtdJogadores = selecao + 1;
+            // Inicia o fluxo do jogo
+            boolean reiniciar = iniciarJogo(nomes, qtdPerguntas);
 
-        // Escolha a quantidade de perguntas
-        int qtdPerguntas = escolherQuantidadeDigitada(
-                "Quantas perguntas cada um deve responder?\n(Escolha de 1 a 7 jogos)", "Configuração", 1, 7);
-
-        // Sistemas de nomes. Caso nao tenha nome o sistema coloca o nome de Assassino
-        // mais o numero que ele seria
-        String[] nomes = new String[qtdJogadores];
-        for (int i = 0; i < qtdJogadores; i++) {
-            nomes[i] = JOptionPane.showInputDialog(null, "Nome do Jogador " + (i + 1) + ":", "Identificação",
-                    JOptionPane.QUESTION_MESSAGE);
-            if (nomes[i] == null || nomes[i].trim().isEmpty()) {
-                nomes[i] = "Jogador " + (i + 1);
+            // Se o retorno de exibirResultadoFinal for false, quebra o loop e encerra
+            if (!reiniciar) {
+                encerrar();
+                break;
             }
         }
-
-        iniciarJogo(nomes, qtdPerguntas);
     }
 
-    private static void iniciarJogo(String[] nomes, int perguntasPorJogador) {
+    private static boolean iniciarJogo(String[] nomes, int perguntasPorJogador) {
         List<List<Questao>> todosOsJogos = criarBancoPorJogo();
         int[] pontuacoes = new int[nomes.length];
 
@@ -111,45 +94,62 @@ public class App {
                 }
             }
         }
-        exibirResultadoFinal(nomes, pontuacoes);
+        return exibirResultadoFinal(nomes, pontuacoes);
     }
 
     // Placar no menu final
-    private static void exibirResultadoFinal(String[] nomes, int[] pontuacoes) {
-        StringBuilder resultado = new StringBuilder("--- PLACAR FINAL ---\n\n");
+    private static boolean exibirResultadoFinal(String[] nomes, int[] pontuacoes) {
+        String bgHeader = "#1a1a2e";
+        String accentColor = "#e94560";
+        StringBuilder resultado = new StringBuilder(
+                "<html><body style='width: 250px; font-family: sans-serif; background-color: #f4f7f6; margin: 0;'>");
+
+        resultado.append("<div style='background-color: ").append(bgHeader)
+                .append("; color: white; padding: 15px; text-align: center; border-radius: 10px 10px 0 0;'>")
+                .append("<h2 style='margin: 0; letter-spacing: 2px;'>📊 PLACAR FINAL</h2></div>");
+
+        resultado.append(
+                "<div style='padding: 15px; background-color: white;'> <table style='width: 100%; border-collapse: collapse;'>");
 
         int maiorPontuacao = -1;
         List<String> vencedores = new ArrayList<>();
 
-        // Aqui e para descobrir a maior pontuação
         for (int i = 0; i < nomes.length; i++) {
-            resultado.append(nomes[i]).append(": ").append(pontuacoes[i]).append(" pontos\n");
+            String rowBg = (i % 2 == 0) ? "#ffffff" : "#f9f9f9";
+            resultado.append("<tr style='background-color: ").append(rowBg).append(";'>")
+                    .append("<td style='padding: 8px;'><b>").append(nomes[i]).append("</b></td>")
+                    .append("<td style='padding: 8px; text-align: right; color: #2980b9;'><b>").append(pontuacoes[i])
+                    .append(" pts</b></td></tr>");
 
             if (pontuacoes[i] > maiorPontuacao) {
                 maiorPontuacao = pontuacoes[i];
-            }
-        }
-
-        // Aqui e se tiver EMPATE
-        for (int i = 0; i < nomes.length; i++) {
-            if (pontuacoes[i] == maiorPontuacao) {
+                vencedores.clear();
+                vencedores.add(nomes[i]);
+            } else if (pontuacoes[i] == maiorPontuacao && maiorPontuacao > 0) {
                 vencedores.add(nomes[i]);
             }
         }
+        resultado.append("</table></div>");
 
-        resultado.append("\n---------------------------\n");
+        resultado.append(
+                "<div style='background-color: #eeeeee; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; border-top: 2px solid ")
+                .append(accentColor).append(";'>");
 
-        // Modo e exibiçao de quem ganhou
-        if (vencedores.size() > 1 && maiorPontuacao > 0) {
-            resultado.append("🏆 EMPATE ENTRE: ").append(String.join(", ", vencedores));
-        } else if (maiorPontuacao > 0) {
-            resultado.append("🏆 VENCEDOR: ").append(vencedores.get(0).toUpperCase());
+        if (maiorPontuacao <= 0) {
+            resultado.append("<b style='color: #c0392b;'>💀 NINGUÉM PONTUOU</b>");
         } else {
-            resultado.append("💀 Ninguém pontuou!");
+            String label = vencedores.size() > 1 ? "EMPATE!" : "GRANDE CAMPEÃO:";
+            resultado.append("<span style='color: #666; font-size: 10px;'>").append(label).append("</span><br>")
+                    .append("<b style='color: ").append(accentColor).append("; font-size: 18px;'>👑 ")
+                    .append(String.join(" & ", vencedores).toUpperCase()).append("</b>");
         }
+        resultado.append("</div></body></html>");
 
-        JOptionPane.showMessageDialog(null, resultado.toString(), "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
-        System.exit(0);
+        Object[] opcoes = { "Reiniciar Jogo", "Finalizar" };
+        int escolha = JOptionPane.showOptionDialog(null, resultado.toString(), "Resultados do Desafio",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, opcoes, opcoes[0]);
+
+        return escolha == 0;
     }
 
     // Garante que o numero de pessoas digitadas seja entre 1 e 7 (Min e Max)
@@ -169,55 +169,81 @@ public class App {
     }
 
     // Mini "banco de dados"
+
     private static List<List<Questao>> criarBancoPorJogo() {
+
         List<List<Questao>> listaMestra = new ArrayList<>();
 
         // Pimeiro jogo e assim segue
+        // * Assassin's Creed
         List<Questao> j1 = new ArrayList<>();
         j1.add(new Questao("Assassin's Creed 1", "Qual o nome do mentor de Altair?",
-                new String[] { "Al Mualim", "Abbas", "Mario" }, 0, 1)); // esse (c:0) indica qual pergunta esta certa o
-                                                                        // 0
-                                                                        // quer dizer que é a primeria alternativa
+                new String[] { "Al Mualim", "Abbas", "Mario" }, 0, 1));
         j1.add(new Questao("Assassin's Creed 1", "O jogo se passa durante qual período?",
                 new String[] { "Cruzadas", "Guerra Fria", "Renascimento" }, 0, 3));
+        j1.add(new Questao("Assassin's Creed 1", "Em qual cidade começa a jornada de Altaïr?",
+                new String[] { "Masyaf", "Damasco", "Jerusalém" }, 0, 1));
+        j1.add(new Questao("Assassin's Creed 1", "Qual o nome da organização inimiga dos Assassinos?",
+                new String[] { "Sarracenos", "Templários", "Hospitalários" }, 1, 2));
+        j1.add(new Questao("Assassin's Creed 1", "Qual o nome do protagonista no presente (2012)?",
+                new String[] { "Clay Kaczmarek", "William Miles", "Desmond Miles" }, 2, 2));
         listaMestra.add(j1);
 
+        // ! Red dead Redemption 2
         List<Questao> j2 = new ArrayList<>();
-        j2.add(new Questao("", "", // Primeira "" Seria o nome do jogo, segunda "" a pergunta
-                new String[] { "", "", "" }, 0, 1)); // Dentro dessas aspas seriam as respostas (leia o que esta
-                                                     // comentado
-                                                     // na linmha 142)
-        j2.add(new Questao("", "",
-                new String[] { "", "", "" }, 0, 2));// esse numeor '2' que tem refere ao peso da pergunta (aumentando e
-                                                    // diminuindo a quantidade de pontos)
+        j2.add(new Questao("Red Dead Redemption 2",
+                "Qual é o nome completo do protagonista?",
+                new String[] { "John Marston", "Arthur Morgan", "Dutch van der Linde" }, 1, 2));
+        j2.add(new Questao("Red Dead Redemption 2",
+                "Em que ano se passa a maior parte da história?",
+                new String[] { "1889", "1899", "1909", "1919" }, 1, 3));
+        j2.add(new Questao("Red Dead Redemption 2",
+                "Qual gangue Arthur Morgan e John Marston fazem parte?",
+                new String[] { "Gangue O'Driscoll", "Gangue Van der Linde", "Gangue Lemoyne Raiders",
+                        "Gangue Murfree Brood" },
+                0, 1));
+        j2.add(new Questao("Red Dead Redemption 2",
+                "Qual é o nome da cidade fictícia inspirada em Nova Orleans que aparece no jogo?",
+                new String[] { "Valentine", "Saint Denis", "Rhodes", "Blackwater" },
+                0, 3));
         listaMestra.add(j2);
 
+        // * MINECRAFT
         List<Questao> j3 = new ArrayList<>();
         j3.add(new Questao("", "",
                 new String[] { "", "", "" }, 1, 1));
         listaMestra.add(j3);
 
+        // !GOD.OF.WAR
         List<Questao> j4 = new ArrayList<>();
         j4.add(new Questao("", "",
                 new String[] { "", "", "" }, 0, 1));
+
         listaMestra.add(j4);
 
+        // !GTA 5
         List<Questao> j5 = new ArrayList<>();
         j5.add(new Questao("", "",
                 new String[] { "", "", "" }, 1, 3));
+
         listaMestra.add(j5);
 
+        // !MARIO BROS
         List<Questao> j6 = new ArrayList<>();
         j6.add(new Questao("", "",
                 new String[] { "", "", "" }, 0, 1));
+
         listaMestra.add(j6);
 
+        // !BATMAN
         List<Questao> j7 = new ArrayList<>();
         j7.add(new Questao("", "",
                 new String[] { "", "", "" }, 0, 2));
+
         listaMestra.add(j7);
 
         return listaMestra;
+
     }
 
     private static void encerrar() {
