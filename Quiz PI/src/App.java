@@ -9,7 +9,7 @@ public class App {
         // Tela Inicial, é possivel personalizar
         while (true) {
             // Tela Inicial estilizada
-            String[] opcoesMenu = { "🚀 Iniciar Quiz", "❌ Sair" };
+            String[] opcoesMenu = { "🚀 Iniciar Quiz", "📖 Como Jogar", "❌ Sair" };
             String mensagem = "<html><div style='text-align: center; background-color: #2c3e50; color: white; padding: 10px; border-radius: 5px;'>"
                     + "   <h2 style='margin: 0; letter-spacing: 2px;'>🎮 DESAFIO DOS 7 JOGOS</h2>"
                     + "   <hr color='#ecf0f1'>"
@@ -19,9 +19,12 @@ public class App {
             int menuPrincipal = JOptionPane.showOptionDialog(null, mensagem, "Menu Principal",
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opcoesMenu, opcoesMenu[0]);
 
-            if (menuPrincipal != 0)
+            if (menuPrincipal == 1) { // Clicou em "Como Jogar"
+                exibirInstrucoes();
+                continue; // Volta para o início do loop (Menu Principal)
+            } else if (menuPrincipal == 2 || menuPrincipal == JOptionPane.CLOSED_OPTION) {
                 encerrar();
-
+            }
             // Configuração de Jogadores
             String[] botoesJogadores = { "1", "2", "3", "4", "5" };
             String msgJogadores = "<html><div style='text-align:center;'><h3>👥 Configuração</h3><hr><p>Quantos jogadores vão participar?</p></div></html>";
@@ -56,6 +59,20 @@ public class App {
                 break;
             }
         }
+    }
+
+    private static void exibirInstrucoes() {
+        String texto = "<html><body style='width: 300px; font-family: sans-serif;'>"
+                + "<h2 style='color: #2980b9; border-bottom: 2px solid #2980b9;'>📖 Como Jogar</h2>"
+                + "<p><b>1. Jogadores:</b> Suporta de 1 a 5 jogadores locais.</p>"
+                + "<p><b>2. Rodadas:</b> Cada jogador escolhe o número de perguntas que deseja responder (1 a 7).</p>"
+                + "<p><b>3. Pontuação:</b> Cada pergunta tem um <b>valor</b> baseado na dificuldade. Acertar soma pontos, errar não desconta.</p>"
+                + "<p><b>4. Dinâmica:</b> O jogo embaralha os temas (Assassin's Creed, RDR2, etc.) para que cada rodada seja única.</p>"
+                + "<hr>"
+                + "<p style='text-align: center; color: #7f8c8d;'><i>Boa sorte, Player 1!</i></p>"
+                + "</body></html>";
+
+        JOptionPane.showMessageDialog(null, texto, "Instruções", JOptionPane.PLAIN_MESSAGE);
     }
 
     private static boolean iniciarJogo(String[] nomes, int perguntasPorJogador) {
